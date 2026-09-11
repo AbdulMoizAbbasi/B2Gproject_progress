@@ -8,7 +8,7 @@ from tavily import TavilyClient
 from groq import Groq
 
 
-EXCEL_FILE = r"C:\Users\PMLS\Desktop\Moiz Details\Jazzworld\B2G\project progress\Consolidated_ICT_Projects_2026-27_1.xlsx"
+EXCEL_FILE = "Consolidated_ICT_Projects_2026-27_1.xlsx"
 PROJECT_SHEET = "ICT Projects - Consolidated"
 NEWS_SHEET = "Project News"
 
