@@ -1,5 +1,9 @@
 from flask import Flask, jsonify
 from openpyxl import load_workbook
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
 
 from update_news import (
     EXCEL_FILE,
