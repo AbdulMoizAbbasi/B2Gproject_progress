@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Progress Tracker</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .query {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .refresh {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .result {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .result h2 {
+            margin-top: 0;
+        }
+
+        .result a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .date {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Project Progress Tracker</h1>
+
+    <div class="query">
+        <strong>Search Query:</strong>
+        {{ query }}
+    </div>
+
+    <a class="refresh" href="/refresh">
+        Refresh Search
+    </a>
+
+    {% for result in results %}
+
+    <div class="result">
+
+        <h2>
+            <a href="{{ result.url }}" target="_blank">
+                {{ result.title }}
+            </a>
+        </h2>
+
+        {% if result.published_date %}
+            <div class="date">
+                Published: {{ result.published_date }}
+            </div>
+        {% else %}
+            <div class="date">
+                Date not available
+            </div>
+        {% endif %}
+
+        <p>{{ result.content }}</p>
+
+    </div>
+
+    {% endfor %}
+
+</body>
+</html>
