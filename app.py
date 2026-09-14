@@ -1,6 +1,13 @@
 from flask import Flask, jsonify
-from openpyxl import load_workbook
 from flask_cors import CORS
+from openpyxl import load_workbook
+
+from update_news import (
+    EXCEL_FILE,
+    PROJECT_SHEET,
+    NEWS_SHEET,
+    refresh_project
+)
 
 app = Flask(__name__)
 
@@ -9,15 +16,16 @@ CORS(
     resources={
         r"/api/*": {
             "origins": [
+                "http://localhost:5500",
+                "http://127.0.0.1:5500",
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "http://localhost:5174",
-                "http://127.0.0.1:5174",
+                "http://127.0.0.1:5174"
             ]
         }
     }
 )
-
 from update_news import (
     EXCEL_FILE,
     PROJECT_SHEET,
