@@ -12,7 +12,7 @@ EXCEL_FILE = "Consolidated_ICT_Projects_2026-27_1.xlsx"
 PROJECT_SHEET = "ICT Projects - Consolidated"
 NEWS_SHEET = "Project News"
 
-MAX_RESULTS = 10
+MAX_RESULTS = 3
 SEARCH_DEPTH = "advanced"
 
 
