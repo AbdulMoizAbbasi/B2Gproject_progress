@@ -9,8 +9,11 @@ from update_news import (
     refresh_project
 )
 
+
 app = Flask(__name__)
 
+
+# CORS configuration
 CORS(
     app,
     resources={
@@ -26,26 +29,21 @@ CORS(
         }
     }
 )
-from update_news import (
-    EXCEL_FILE,
-    PROJECT_SHEET,
-    NEWS_SHEET,
-    refresh_project
-)
-
-
-app = Flask(__name__)
 
 
 def get_projects():
 
-    wb = load_workbook(EXCEL_FILE, data_only=True)
+    wb = load_workbook(
+        EXCEL_FILE,
+        data_only=True
+    )
 
     ws = wb[PROJECT_SHEET]
 
     headers = {}
 
     for cell in ws[1]:
+
         if cell.value:
             headers[str(cell.value).strip()] = cell.column
 
@@ -79,13 +77,17 @@ def get_projects():
 
 def get_project_details(project_id):
 
-    wb = load_workbook(EXCEL_FILE, data_only=True)
+    wb = load_workbook(
+        EXCEL_FILE,
+        data_only=True
+    )
 
     ws = wb[PROJECT_SHEET]
 
     headers = {}
 
     for cell in ws[1]:
+
         if cell.value:
             headers[str(cell.value).strip()] = cell.column
 
@@ -109,6 +111,9 @@ def get_project_details(project_id):
                     column
                 ).value
 
+                if hasattr(value, "isoformat"):
+                    value = value.isoformat()
+
                 project[name] = value
 
             return project
@@ -118,7 +123,10 @@ def get_project_details(project_id):
 
 def get_project_news(project_id):
 
-    wb = load_workbook(EXCEL_FILE, data_only=True)
+    wb = load_workbook(
+        EXCEL_FILE,
+        data_only=True
+    )
 
     if NEWS_SHEET not in wb.sheetnames:
         return []
@@ -128,8 +136,12 @@ def get_project_news(project_id):
     headers = {}
 
     for cell in ws[1]:
+
         if cell.value:
             headers[str(cell.value).strip()] = cell.column
+
+    if "Project ID" not in headers:
+        return []
 
     news = []
 
@@ -173,43 +185,76 @@ def home():
 @app.route("/api/projects")
 def projects():
 
-    return jsonify(get_projects())
+    try:
+
+        return jsonify(
+            get_projects()
+        )
+
+    except Exception as e:
+
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
 @app.route("/api/projects/<project_id>")
 def project(project_id):
 
-    project_data = get_project_details(project_id)
+    try:
 
-    if not project_data:
+        project_data = get_project_details(
+            project_id
+        )
+
+        if not project_data:
+
+            return jsonify({
+                "error": "Project not found"
+            }), 404
+
+        return jsonify(project_data)
+
+    except Exception as e:
 
         return jsonify({
-            "error": "Project not found"
-        }), 404
-
-    return jsonify(project_data)
+            "error": str(e)
+        }), 500
 
 
 @app.route("/api/projects/<project_id>/news")
 def project_news(project_id):
 
-    project_data = get_project_details(project_id)
+    try:
 
-    if not project_data:
+        project_data = get_project_details(
+            project_id
+        )
+
+        if not project_data:
+
+            return jsonify({
+                "error": "Project not found"
+            }), 404
+
+        news = get_project_news(
+            project_id
+        )
 
         return jsonify({
-            "error": "Project not found"
-        }), 404
+            "project_id": project_id,
+            "project_name": project_data.get(
+                "Project / Scheme Name"
+            ),
+            "news": news
+        })
 
-    news = get_project_news(project_id)
+    except Exception as e:
 
-    return jsonify({
-        "project_id": project_id,
-        "project_name": project_data.get(
-            "Project / Scheme Name"
-        ),
-        "news": news
-    })
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 @app.route(
@@ -224,7 +269,9 @@ def refresh_news(project_id):
             project_id=project_id
         )
 
-        news = get_project_news(project_id)
+        news = get_project_news(
+            project_id
+        )
 
         return jsonify({
             "success": True,
@@ -235,6 +282,10 @@ def refresh_news(project_id):
         })
 
     except Exception as e:
+
+        print(
+            f"Refresh error for project {project_id}: {e}"
+        )
 
         return jsonify({
             "success": False,
